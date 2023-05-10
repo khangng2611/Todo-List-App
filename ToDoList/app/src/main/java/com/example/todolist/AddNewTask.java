@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.Model.ToDoModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -69,7 +70,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
         newTaskText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -98,7 +98,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 if (finalIsUpdate && toDoModel != null)
                     toDoModel.setTask(text);
                 else {
-                    ToDoModel addNew = new ToDoModel(0,0,text);
+                    ToDoModel addNew = new ToDoModel(0,false,text);
                     ((MainActivity) getActivity()).toDoList.add(addNew);
                 }
                 dismiss();
@@ -106,11 +106,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
         });
     }
 
-    @Override
-    public void onCancel(@NonNull DialogInterface dialog) {
-        callback.callback();
-        super.onCancel(dialog);
-    }
 
     @Override
     public void dismiss() {

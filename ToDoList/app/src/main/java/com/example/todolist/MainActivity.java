@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity{
     public void createFakeData () {
         this.toDoList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ToDoModel a = new ToDoModel(i,0,"Task number "+i);
+            ToDoModel a = new ToDoModel(i,false,"Task number "+i);
             this.toDoList.add(a);
         }
     }

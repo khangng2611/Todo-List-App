@@ -38,14 +38,16 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.checkbox.setText(this.todoList.get(position).getTask());
-        holder.checkbox.setChecked(this.todoList.get(position).getStatus());
-//        holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                removeItem(holder.getAbsoluteAdapterPosition());
-//            }
-//        });
+//        System.out.println(position);
+        ToDoModel toDoModel = this.todoList.get(position);
+        holder.checkbox.setText(toDoModel.getTask());
+        holder.checkbox.setChecked(toDoModel.getStatus());
+        holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                toDoModel.toggle();
+            }
+        });
         holder.checkbox.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {

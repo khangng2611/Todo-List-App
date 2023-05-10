@@ -12,7 +12,7 @@ import com.example.todolist.Adapter.ToDoAdapter;
 public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     private ToDoAdapter toDoAdapter;
     public RecyclerItemTouchHelper(ToDoAdapter toDoAdapter) {
-        super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        super(0,ItemTouchHelper.LEFT);
         this.toDoAdapter = toDoAdapter;
     }
     @Override
@@ -48,8 +48,6 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 //                    toDoAdapter.notifyItemChanged(viewHolder.getAbsoluteAdapterPosition());
 //                }
 //            });
-        } else {
-            toDoAdapter.editItem(position);
         }
     }
 }

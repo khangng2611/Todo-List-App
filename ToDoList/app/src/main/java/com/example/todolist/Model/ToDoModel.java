@@ -3,9 +3,10 @@ package com.example.todolist.Model;
 import java.io.Serializable;
 
 public class ToDoModel implements Serializable {
-    private int id, status;
+    private int id;
+    private boolean status;
     private String task;
-    public ToDoModel(int id, int status, String task) {
+    public ToDoModel(int id, boolean status, String task) {
         setId(id);
         setStatus(status);
         setTask(task);
@@ -19,10 +20,10 @@ public class ToDoModel implements Serializable {
     }
 
     public boolean getStatus() {
-        return this.status == 1;
+        return this.status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
@@ -31,7 +32,7 @@ public class ToDoModel implements Serializable {
     }
 
     public void toggle() {
-        this.status = 1-this.status;
+        this.status = !this.status;
     }
 
     public void setTask(String task) {

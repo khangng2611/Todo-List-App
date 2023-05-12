@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.AddNewTask;
+import com.example.todolist.Data.ToDoList;
 import com.example.todolist.MainActivity;
 import com.example.todolist.Model.ToDoModel;
 import com.example.todolist.R;
@@ -23,11 +24,12 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     private final MainActivity activity;
     public ToDoAdapter(MainActivity activity) {
         this.activity = activity;
-        todoList = activity.toDoList;
+        todoList = ToDoList.getToDoList();
     }
     public Context getContext() {
         return this.activity;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,35 +41,36 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 //        System.out.println(position);
-        ToDoModel toDoModel = this.todoList.get(position);
-        holder.checkbox.setText(toDoModel.getTask());
-        holder.checkbox.setChecked(toDoModel.getStatus());
+        holder.checkbox.setText(this.todoList.get(position).getTask());
+        holder.checkbox.setChecked(this.todoList.get(position).getStatus());
         holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                toDoModel.toggle();
+                int taskPosition = holder.getAbsoluteAdapterPosition();
+                todoList.get(taskPosition).toggle();
             }
         });
         holder.checkbox.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 editItem(holder.getAbsoluteAdapterPosition());
-                return false;
+                return true;
             }
         });
     }
     public void editItem(int position){
-        AddNewTask dialog =  AddNewTask.newInstance();
-        Bundle bundle = new Bundle();
-//                AddNewTask.Callback callback =
-        bundle.putSerializable("callback", new AddNewTask.Callback() {
+        ToDoAdapter adapter = this;
+        AddNewTask dialog = new AddNewTask(todoList.get(position), new AddNewTask.Callback() {
             @Override
-            public void callback() {
-                activity.onDialogDismiss();
+            public void changedCallback() {
+                adapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void dismissCallback() {
+                adapter.notifyItemChanged(position);
             }
         });
-        bundle.putSerializable("toDoModel",todoList.get(position));
-        dialog.setArguments(bundle);
         dialog.show(activity.getSupportFragmentManager(), AddNewTask.TAG);
     }
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.todolist.Adapter.ToDoAdapter;
+import com.example.todolist.Data.ToDoList;
 import com.example.todolist.Model.ToDoModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -16,23 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
-    public List<ToDoModel> toDoList ;
     private ToDoAdapter tasksAdapter;
     RecyclerView tasksRecyclerView;
-    public void createFakeData () {
-        this.toDoList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ToDoModel a = new ToDoModel(i,false,"Task number "+i);
-            this.toDoList.add(a);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
-        createFakeData();
+        ToDoList.createFakeData();
+
         tasksRecyclerView = findViewById(R.id.tasksRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         tasksRecyclerView.setLayoutManager(layoutManager);
@@ -46,21 +40,20 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddNewTask dialog =  AddNewTask.newInstance();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("callback", new AddNewTask.Callback() {
+                AddNewTask dialog = new AddNewTask(new AddNewTask.Callback() {
                     @Override
-                    public void callback() {
-                        onDialogDismiss();
+                    public void changedCallback() {
+                        int newTaskPosition = ToDoList.getToDoList().size();
+                        tasksAdapter.notifyItemInserted(newTaskPosition);
+                    }
+
+                    @Override
+                    public void dismissCallback() {
+
                     }
                 });
-                dialog.setArguments(bundle);
                 dialog.show(getSupportFragmentManager(), AddNewTask.TAG);
             }
         });
-    }
-
-    public void onDialogDismiss() {
-        tasksAdapter.notifyDataSetChanged();
     }
 }

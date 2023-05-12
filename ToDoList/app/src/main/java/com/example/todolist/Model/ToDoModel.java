@@ -12,7 +12,7 @@ public class ToDoModel implements Serializable {
         setTask(task);
     }
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {

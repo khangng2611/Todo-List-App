@@ -14,23 +14,30 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.Model.ToDoModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.io.Serializable;
+import com.example.todolist.Data.ToDoList;
 
 public class AddNewTask extends BottomSheetDialogFragment {
     public static final String TAG = "ActionBottomDialog";
-    public ToDoModel toDoModel = null;
-    public  Callback callback = null;
+    private ToDoModel toDoModel = null;
+    private Callback callback = null;
 
     private EditText newTaskText;
     private Button newTaskSaveButton;
 
-    public static AddNewTask newInstance(){
-        return new AddNewTask();
+
+    public AddNewTask(ToDoModel toDoModel){
+        this.toDoModel = toDoModel;
+    }
+    public AddNewTask(ToDoModel toDoModel, Callback callback){
+        this.toDoModel = toDoModel;
+        this.callback = callback;
+    }
+    public AddNewTask(Callback callback){
+        this.callback = callback;
     }
 
     @Override
@@ -52,19 +59,12 @@ public class AddNewTask extends BottomSheetDialogFragment {
         newTaskText = getView().findViewById(R.id.newTaskText);
         newTaskSaveButton= getView().findViewById(R.id.newTaskButton);
 
-        boolean isUpdate = false;
-        final Bundle bundle = getArguments();
-        if (bundle != null) {
-            toDoModel = (ToDoModel) bundle.getSerializable("toDoModel");
-            callback = (Callback) bundle.getSerializable("callback");
-            if(toDoModel != null)
-            {
-                isUpdate = true;
-                String task = toDoModel.getTask();
-                newTaskText.setText(task);
-                if (task.length() > 0)
-                    newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(),R.color.white));
-            }
+        boolean isUpdate = this.toDoModel != null;
+        if(isUpdate){
+            String task = toDoModel.getTask();
+            newTaskText.setText(task);
+            if (task.length() > 0)
+                newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(),R.color.white));
         }
 
         newTaskText.addTextChangedListener(new TextWatcher() {
@@ -89,31 +89,31 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
-
         boolean finalIsUpdate = isUpdate;
         newTaskSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String text = newTaskText.getText().toString();
-                if (finalIsUpdate && toDoModel != null)
+                if (isUpdate)
                     toDoModel.setTask(text);
                 else {
-                    ToDoModel addNew = new ToDoModel(0,false,text);
-                    ((MainActivity) getActivity()).toDoList.add(addNew);
+                    ToDoModel newToDoModel = new ToDoModel(0,false,text);
+                    ToDoList.addTask(newToDoModel);
                 }
+                callback.changedCallback();
                 dismiss();
             }
         });
     }
 
-
     @Override
-    public void dismiss() {
-        callback.callback();
-        super.dismiss();
+    public void onCancel(@NonNull DialogInterface dialog) {
+        callback.dismissCallback();
+        super.onCancel(dialog);
     }
 
-    public interface Callback extends Serializable {
-        public void callback();
+    public interface Callback {
+        public void changedCallback();
+        public void dismissCallback();
     }
 }
